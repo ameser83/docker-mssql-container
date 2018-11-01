@@ -1,0 +1,31 @@
+version: '3.7'
+
+networks:
+  sqlserver:
+    ipam:
+     config:
+       - subnet: 172.20.0.0/24
+       
+services:
+
+  mssql:
+  
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      
+    networks:
+      sqlserver:
+        ipv4_address: 172.20.0.5
+        
+    environment:
+      SA_PASSWORD: "Administrador1"
+      ACCEPT_EULA: "Y"
+      
+    ports:
+      - "1433:1433"
+      
+    healthcheck:
+      test: [ "CMD", "SQLCMD", "-U", "SA", "_P", "Administrador1", "-Q", "SELECT 1" ]
+      interval: 1s
+      retries: 20
